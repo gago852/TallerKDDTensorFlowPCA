@@ -12,8 +12,7 @@ model = Sequential()
 model.add(Dense(16, input_dim=2, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
-model.compile(loss='mean_squared_error',
-              optimizer='adam',
+model.compile(loss='mean_squared_error', optimizer='adam',
               metrics=['binary_accuracy'])
 
 model.fit(training_data, target_data, epochs=1000)
