@@ -1,7 +1,7 @@
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
 # %%
-#integrantes: GABRIEL GOMEZ, EDUARDO DE LA HOZ, STEPHANIA DE LA HOZ
+# integrantes: GABRIEL GOMEZ, EDUARDO DE LA HOZ, STEPHANIA DE LA HOZ, NEMESYS EVILLA
 
 
 # %%
@@ -22,10 +22,10 @@ def skynet(patrones, objetivos):
     objetivo = objetivos.to_numpy()
     modelo = Sequential()
     modelo.add(Dense(10, input_dim=2, activation='sigmoid'))
-    modelo.add(Dense(1, activation='relu'))
+    modelo.add(Dense(1, activation='linear'))
     modelo.compile(loss='mean_squared_error', optimizer='adam',
                    metrics=['categorical_accuracy'])
-    modelo.fit(patron, objetivo, epochs=1000)
+    modelo.fit(patron, objetivo, epochs=1000, verbose=0)
     puntaje = modelo.evaluate(patron, objetivo)
     print("\n%s: %.2f%%" % (modelo.metrics_names[1], puntaje[1]*100))
     return modelo
@@ -35,6 +35,39 @@ def prueba(modelo, dfPrueba):
     conjuntoPrueba = dfPrueba.to_numpy()
     preduccion = modelo.predict(conjuntoPrueba)
     return preduccion
+
+
+def atinar(dataframe):
+    datos = pd.DataFrame(data=np.zeros(len(dataframe)), columns=[
+                         'resultado'], index=dataframe.index)
+    datos['acierto'] = (1 == 1)
+    for row in dataframe.iterrows():
+        if row[1]['prediccion'] < 0.3:
+            datos.at[row[0], 'resultado'] = 0
+        elif row[1]['prediccion'] >= 0.3 and row[1]['prediccion'] < 0.7:
+            datos.at[row[0], 'resultado'] = 0.5
+        elif row[1]['prediccion'] >= 0.7:
+            datos.at[row[0], 'resultado'] = 1
+        else:
+            datos.at[row[0], 'resultado'] = -1
+    datos['acierto'] = np.where(
+        datos['resultado'] == dataframe[2], True, False)
+    dataframe['resultado'] = datos['resultado']
+    dataframe['resultado'] = datos['resultado'].values
+    dataframe['acierto'] = datos['acierto']
+    dataframe['acierto'] = datos['acierto'].values
+    return dataframe
+
+
+def confusio(data):
+    matriz = np.zeros([3, 3])
+    matrizTest = [0, 0.5, 1]
+    for i in matriz:
+        for x in i:
+            for row in data.iterrows():
+                if row[1]['resultado'] == matrizTest[x]:
+                    print(i)
+    return 0
 
 
 # %%
@@ -114,8 +147,40 @@ prediccionTotal = prueba(modeloTotal, test.drop(2, 1))
 
 
 # %%
-print(prediccionTotal.round(1))
-print(prediccion1.round(1))
-print(prediccion2.round(1))
-print(prediccion3.round(1))
-print(prediccion4.round(1))
+print(prediccionTotal.round(2))
+print(prediccion1.round(2))
+print(prediccion2.round(2))
+print(prediccion3.round(2))
+print(prediccion4.round(2))
+
+
+# %%
+test['prediccion'] = prediccionTotal
+df1['prediccion'] = prediccion1
+df2['prediccion'] = prediccion2
+df3['prediccion'] = prediccion3
+df4['prediccion'] = prediccion4
+
+
+# %%
+test = atinar(test)
+df1 = atinar(df1)
+df2 = atinar(df2)
+df3 = atinar(df3)
+df4 = atinar(df4)
+
+
+# %%
+porcenAciertoTotal = ((test['acierto'].values.sum())/len(test))*100
+porcenAciertoMod1 = ((df1['acierto'].values.sum())/len(df1))*100
+porcenAciertoMod2 = ((df2['acierto'].values.sum())/len(df2))*100
+porcenAciertoMod3 = ((df3['acierto'].values.sum())/len(df3))*100
+porcenAciertoMod4 = ((df4['acierto'].values.sum())/len(df4))*100
+
+
+# %%
+print(porcenAciertoTotal)
+print(porcenAciertoMod1)
+print(porcenAciertoMod2)
+print(porcenAciertoMod3)
+print(porcenAciertoMod4)
