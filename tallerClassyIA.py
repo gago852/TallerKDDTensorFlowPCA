@@ -1,10 +1,5 @@
-# To add a new cell, type '# %%'
-# To add a new markdown cell, type '# %% [markdown]'
-# %%
 # integrantes: GABRIEL GOMEZ, EDUARDO DE LA HOZ, STEPHANIA DE LA HOZ, NEMESYS EVILLA
 
-
-# %%
 import numpy as np
 import pandas as pd
 import scipy.linalg as la
@@ -12,7 +7,6 @@ from keras.models import Sequential
 from keras.layers.core import Dense
 
 
-# %%
 def cleaner(df, k):
     return df[(abs(df[0]-np.mean(df[0])) <= k*np.std(df[0])) & (abs(df[1]-np.mean(df[1])) <= k*np.std(df[1])) & (abs(df[2]-np.mean(df[2])) <= k*np.std(df[2])) & (abs(df[3]-np.mean(df[3])) <= k*np.std(df[3]))]
 
@@ -60,17 +54,12 @@ def atinar(dataframe):
 
 
 def confusio(data):
-    matriz = np.zeros([3, 3])
-    matrizTest = [0, 0.5, 1]
-    for i in matriz:
-        for x in i:
-            for row in data.iterrows():
-                if row[1]['resultado'] == matrizTest[x]:
-                    print(i)
-    return 0
+    act = pd.Series(data['resultado'], name='actual')
+    pred = pd.Series(data[2], name='predicho')
+    matriz = pd.crosstab(act, pred)
+    return matriz
 
 
-# %%
 df = pd.read_table('irisdata.txt', skiprows=9, header=None)
 dfClean = df.copy()
 cat = df.iloc[:, 4]
@@ -83,8 +72,6 @@ resultRaw = la.eig(covRawData)
 eugenVector = resultRaw[1]
 eugenValors = resultRaw[0].real
 
-
-# %%
 promedio = np.mean(rawdata)
 x = rawdata-promedio
 proyeccion = eugenVector.T[:][:2].T
@@ -92,8 +79,6 @@ xPC = x.dot(proyeccion)
 dfFlores = pd.DataFrame(data=xPC)
 dfFlores[2] = catn
 
-
-# %%
 p_train = 0.80  # Porcentaje de train.
 
 dfFlores['entrenamiento'] = np.random.uniform(0, 1, len(dfFlores)) <= p_train
@@ -101,8 +86,6 @@ train, test = dfFlores[dfFlores['entrenamiento'] ==
                        True], dfFlores[dfFlores['entrenamiento'] == False]
 dfFlores = dfFlores.drop('entrenamiento', 1)
 
-
-# %%
 algo = 0.50
 train['entrenamiento'] = np.random.uniform(0, 1, len(train)) <= algo
 mitad1, mitad2 = train[train['entrenamiento'] ==
@@ -119,8 +102,6 @@ df2 = df2.drop('entrenamiento', 1)
 df3 = df3.drop('entrenamiento', 1)
 df4 = df4.drop('entrenamiento', 1)
 
-
-# %%
 entreno1 = df2.append([df3, df4])
 entreno2 = df1.append([df3, df4])
 entreno3 = df1.append([df2, df4])
@@ -136,8 +117,6 @@ prediccion2 = prueba(modelo2, df2.drop(2, 1))
 prediccion3 = prueba(modelo3, df3.drop(2, 1))
 prediccion4 = prueba(modelo4, df4.drop(2, 1))
 
-
-# %%
 train = train.drop('entrenamiento', 1)
 test = test.drop('entrenamiento', 1)
 
@@ -145,42 +124,44 @@ modeloTotal = skynet(train.drop(2, 1), train[2])
 
 prediccionTotal = prueba(modeloTotal, test.drop(2, 1))
 
-
-# %%
 print(prediccionTotal.round(2))
 print(prediccion1.round(2))
 print(prediccion2.round(2))
 print(prediccion3.round(2))
 print(prediccion4.round(2))
 
-
-# %%
 test['prediccion'] = prediccionTotal
 df1['prediccion'] = prediccion1
 df2['prediccion'] = prediccion2
 df3['prediccion'] = prediccion3
 df4['prediccion'] = prediccion4
 
-
-# %%
 test = atinar(test)
 df1 = atinar(df1)
 df2 = atinar(df2)
 df3 = atinar(df3)
 df4 = atinar(df4)
 
-
-# %%
 porcenAciertoTotal = ((test['acierto'].values.sum())/len(test))*100
 porcenAciertoMod1 = ((df1['acierto'].values.sum())/len(df1))*100
 porcenAciertoMod2 = ((df2['acierto'].values.sum())/len(df2))*100
 porcenAciertoMod3 = ((df3['acierto'].values.sum())/len(df3))*100
 porcenAciertoMod4 = ((df4['acierto'].values.sum())/len(df4))*100
 
-
-# %%
 print(porcenAciertoTotal)
 print(porcenAciertoMod1)
 print(porcenAciertoMod2)
 print(porcenAciertoMod3)
 print(porcenAciertoMod4)
+
+matrizConfusioTotal = confusio(test)
+matrizConfusio1 = confusio(df1)
+matrizConfusio2 = confusio(df2)
+matrizConfusio3 = confusio(df3)
+matrizConfusio4 = confusio(df4)
+
+print(matrizConfusioTotal)
+print(matrizConfusio1)
+print(matrizConfusio2)
+print(matrizConfusio3)
+print(matrizConfusio4)
