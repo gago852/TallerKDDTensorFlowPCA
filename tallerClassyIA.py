@@ -124,11 +124,11 @@ modeloTotal = skynet(train.drop(2, 1), train[2])
 
 prediccionTotal = prueba(modeloTotal, test.drop(2, 1))
 
-print(prediccionTotal.round(2))
-print(prediccion1.round(2))
-print(prediccion2.round(2))
-print(prediccion3.round(2))
-print(prediccion4.round(2))
+# print(prediccionTotal.round(2))
+# print(prediccion1.round(2))
+# print(prediccion2.round(2))
+# print(prediccion3.round(2))
+# print(prediccion4.round(2))
 
 test['prediccion'] = prediccionTotal
 df1['prediccion'] = prediccion1
@@ -148,11 +148,20 @@ porcenAciertoMod2 = ((df2['acierto'].values.sum())/len(df2))*100
 porcenAciertoMod3 = ((df3['acierto'].values.sum())/len(df3))*100
 porcenAciertoMod4 = ((df4['acierto'].values.sum())/len(df4))*100
 
-print(porcenAciertoTotal)
-print(porcenAciertoMod1)
-print(porcenAciertoMod2)
-print(porcenAciertoMod3)
-print(porcenAciertoMod4)
+print('porcentaje de acierto modelo 80/20 '+str(porcenAciertoTotal.round(2)))
+print('/n')
+print('porcentaje de acierto modelo 1 cross validation ' +
+      str(porcenAciertoMod1.round(2)))
+print('/n')
+print('porcentaje de acierto modelo 2 cross validation ' +
+      str(porcenAciertoMod2.round(2)))
+print('/n')
+print('porcentaje de acierto modelo 3 cross validation ' +
+      str(porcenAciertoMod3.round(2)))
+print('/n')
+print('porcentaje de acierto modelo 4 cross validation ' +
+      str(porcenAciertoMod4.round(2)))
+print('/n')
 
 matrizConfusioTotal = confusio(test)
 matrizConfusio1 = confusio(df1)
@@ -160,8 +169,17 @@ matrizConfusio2 = confusio(df2)
 matrizConfusio3 = confusio(df3)
 matrizConfusio4 = confusio(df4)
 
+print('matriz de confusion modelo 80/20')
 print(matrizConfusioTotal)
+print('/n')
+print('matriz de confusion 1 cross validation')
 print(matrizConfusio1)
+print('/n')
+print('matriz de confusion 2 cross validation')
 print(matrizConfusio2)
+print('/n')
+print('matriz de confusion 3 cross validation')
 print(matrizConfusio3)
+print('/n')
+print('matriz de confusion 4 cross validation')
 print(matrizConfusio4)
