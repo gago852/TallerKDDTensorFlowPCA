@@ -15,7 +15,7 @@ def skynet(patrones, objetivos):
     patron = patrones.to_numpy()
     objetivo = objetivos.to_numpy()
     modelo = Sequential()
-    modelo.add(Dense(10, input_dim=2, activation='sigmoid'))
+    modelo.add(Dense(10, input_dim=2, activation='tanh'))
     modelo.add(Dense(1, activation='linear'))
     modelo.compile(loss='mean_squared_error', optimizer='adam',
                    metrics=['categorical_accuracy'])
@@ -183,3 +183,19 @@ print(matrizConfusio3)
 print('/n')
 print('matriz de confusion 4 cross validation')
 print(matrizConfusio4)
+
+modelos=[porcenAciertoMod1,porcenAciertoMod2,porcenAciertoMod3,porcenAciertoMod4]
+iterante=0
+mayor=-9999
+
+for idd in range(len(modelos)):
+    if modelos[idd] > mayor:
+        mayor=modelos[idd]
+        iterante=idd
+
+if porcenAciertoTotal>mayor:
+    print('modelo 80/20 mejor que el modelo cross vadilation')
+elif porcenAciertoTotal<mayor:
+    print('modelo cross valdilation '+str(iterante+1)+' es mejor que el modelo 80/20')
+else:
+    print('los dos modelos son los mejores')
